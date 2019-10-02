@@ -68,6 +68,7 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
                         String streetAddress = temp.subStringBefore(',');
                         streetAddress = streetAddress.trim();
                         newLead.Project_Address__c = streetAddress;
+                        newLead.Mailing_Address__c = streetAddress;
                         System.debug('Street Address = ' + streetAddress);
 
                         String cityStateZip = temp.substringAfter(',');
@@ -77,6 +78,7 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
                         String city = cityStateZip.substringBefore(',');
                         city = city.trim();
                         newLead.Project_City__c = city;
+                        newLead.Mailing_City__c = city;
                         System.debug('City = ' + city);
 
                         String stateZip = cityStateZip.substringAfter(',');
@@ -86,16 +88,19 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
                         String state = stateZip.substringBefore(' ');
                         state = state.trim();
                         newLead.Project_State__c = state;
+                        newLead.Mailing_State__c = state;
                         System.debug('State = ' + state);
 
                         String zipCode = stateZip.substringAfter(' ');
                         zipCode = zipCode.trim();
                         newLead.Project_Zip_Code__c = zipCode;
+                        newLead.Mailing_Zip_Code__c = zipCode;
                         System.debug('Zip = ' + zipCode);
                     }
                  } // end loop
-                    newLead.SDR__c     = 'Casey Creech';
+                    newLead.SDR__c     = 'Justin Creech';
                     newLead.LeadSource = 'Home Advisor';
+                    newLead.Energy_Consultant__c = 'NONE';
                     newLead.Solar_Review_Home_Advisor_Notes__c = emailText.substringBetween('You have a new lead!', 'Tips from HomeAdvisor');
                     insert newLead;
                     System.debug('New Lead inserted: ' + newLead.Firstname + ' ' + newLead.LastName);
@@ -145,18 +150,25 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
                         // set address
                         temp = leadInfoList.get(i).substringAfter('Address of site:');
                         newLead.Project_Address__c = temp.trim();
+                        newLead.Mailing_Address__c = temp.trim();
                         // parse the City, State, and Zip
                         String cityStateZip = leadInfoList.get(i+1);
                         cityStateZip        = cityStateZip.trim();
                         String lzipCode     = cityStateZip.substringAfterLast(' ');
+                        //  Set Zip Code
                         newLead.Project_Zip_Code__c = lzipCode.trim();
+                        newLead.Mailing_Zip_Code__c = lzipCode.trim();
                         String cityState    = cityStateZip.remove(lzipCode);
                         cityState           = cityState.trim();
                         String lstate       = cityState.substringAfterLast(' ');
+                        // Set State
                         newLead.Project_State__c = lstate.trim();
+                        newLead.Mailing_State__c = lstate.trim();
                         String lcity             = cityState.substringBeforeLast(' ');
+                        // Set City
                         newLead.Project_City__c  = lcity.trim();
-                    } else if (leadInfoList.get(i).contains('Utility Company')) {
+                        newLead.Mailing_City__c  = lcity.trim();
+                    } /* else if (leadInfoList.get(i).contains('Utility Company')) { // UTILITY COMPANY
                         // set utility company
                         temp = leadInfoList.get(i).substringAfter('Utility Company:');
                         temp = temp.trim();
@@ -187,10 +199,11 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
                                 System.debug('Utility Company created! ' + newAccount.Name);
                             }
                         }
-                    }
+                    } */
                  } // end loop // end loop
-                    newLead.SDR__c    = 'Casey Creech';
-                    newLead.LeadSource = 'Solar Reviews';
+                    newLead.SDR__c    = 'Justin Creech';
+                    newLead.LeadSource = 'solarreviews.com';
+                    newLead.Energy_Consultant__c = 'NONE';
                     newLead.Solar_Review_Home_Advisor_Notes__c = emailText.substringAfter('make a request.');
                     insert newLead;
                     System.debug('New Lead inserted: ' + newLead.Firstname + ' ' + newLead.LastName);
