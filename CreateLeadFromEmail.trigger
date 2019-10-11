@@ -6,10 +6,11 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
 
 		String subToCompareOne = 'HomeAdvisor';
 		String subToCompareTwo = 'Solar-Estimate.org';
+		String subToCompareThree = 'SolarReviews.com';
         String emailText       = email.plainTextBody;
         System.debug(emailText);
 
-		if (email.subject.contains(subToCompareOne) || email.subject.contains(subToCompareTwo)) {
+		if (email.subject.contains(subToCompareOne) || email.subject.contains(subToCompareTwo) || email.subject.contains(subToCompareThree) ) {
             Lead newLead = new Lead();
             if (email.subject.contains(subToCompareOne)) { // iF HOMEADVISOR EMAIL
                 List<String> lstLines = new List<String>();
@@ -105,7 +106,7 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
                     insert newLead;
                     System.debug('New Lead inserted: ' + newLead.Firstname + ' ' + newLead.LastName);
             	} // END HOME ADVISOR LOGIC
-            else if (email.subject.contains(subToCompareTwo)) { // IF SOLAR REVIEWS EMAIL
+            else if (email.subject.contains(subToCompareTwo) || email.subject.contains(subToCompareThree)) { // IF SOLAR REVIEWS EMAIL
                 List<String> lstLines      = new List<String>();
                 List<String> leadInfoList  = new List<String>();
                 lstLines = emailText.split('\n');
