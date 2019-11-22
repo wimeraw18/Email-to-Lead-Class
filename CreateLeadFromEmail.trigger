@@ -1,15 +1,11 @@
 global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
-
     global Messaging.InboundEmailResult handleInboundEmail(Messaging.InboundEmail email, Messaging.InboundEnvelope envelope) {
-
         Messaging.InboundEmailResult result = new Messaging.InboundEmailresult();
-
 		String subToCompareOne = 'HomeAdvisor';
 		String subToCompareTwo = 'Solar-Estimate.org';
 		String subToCompareThree = 'SolarReviews.com';
         String emailText       = email.plainTextBody;
         System.debug(emailText);
-
 		if (email.subject.contains(subToCompareOne) || email.subject.contains(subToCompareTwo) || email.subject.contains(subToCompareThree) ) {
             Lead newLead = new Lead();
             if (email.subject.contains(subToCompareOne)) { // iF HOMEADVISOR EMAIL
@@ -33,7 +29,6 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
                     leadInfoList.add(lstLines.get(i));
                 }
                 System.Debug('Relevant Information = ' + leadInfoList);
-
                 // use releavant info to set lead field values
                 for (Integer i = 0; i < leadinfoList.size(); i++) {
                     if(leadInfolist.get(i).contains('Customer Information')){
@@ -53,10 +48,6 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
                         temp = leadInfoList.get(i).substringAfterLast('/');
                         temp = temp.replace('>', '');
                         temp = temp.trim();
-                        // temp = temp.substringafter(' ');
-                        // temp = temp.trim();
-                        // temp = temp.substringbeforeLast(' ');
-                        // temp = temp.trim();
                         newLead.Phone = temp;
                     } else if (leadInfoList.get(i).contains('Address')) {
                         // set address
@@ -99,7 +90,7 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
                         System.debug('Zip = ' + zipCode);
                     }
                  } // end loop
-                    newLead.SDR__c     = 'Justin Creech';
+                    newLead.SDR__c     = 'John Doe';
                     newLead.LeadSource = 'Home Advisor';
                     newLead.Energy_Consultant__c = 'NONE';
                     newLead.Solar_Review_Home_Advisor_Notes__c = emailText.substringBetween('You have a new lead!', 'Tips from HomeAdvisor');
@@ -126,9 +117,7 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
                 for (Integer i = startIndex; i < endIndex + 1; i++) {
                     leadInfoList.add(lstLines.get(i));
                 }
-                
                 System.Debug('Relevant Information = ' + leadInfoList);
-                
                 // use relevant info to set lead field values
                 for (Integer i = 0; i < leadInfoList.size(); i++) {
                     if(leadInfoList.get(i).contains('Requested by:')){
@@ -169,47 +158,15 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
                         // Set City
                         newLead.Project_City__c  = lcity.trim();
                         newLead.Mailing_City__c  = lcity.trim();
-                    } /* else if (leadInfoList.get(i).contains('Utility Company')) { // UTILITY COMPANY
-                        // set utility company
-                        temp = leadInfoList.get(i).substringAfter('Utility Company:');
-                        temp = temp.trim();
-                        System.debug('Utility Company from Email = ' + temp);
-                        if (temp != null && !temp.equalsIgnoreCase('other')) {
-                            List<Account> utilityCompany = [
-                                SELECT Id, Name
-                                  FROM Account
-                                 WHERE Name = :temp
-                                 LIMIT 1
-                            ];
-                             System.debug('Result from Utility Company Query = ' + utilityCompany);
-                            if (!utilityCompany.isEmpty()) { // utility company already in org
-                               
-                                newLead.Utility_Company__c = utilityCompany.get(0).Id;
-                                System.debug('Matching Utility Company was found! ' + utilityCompany.get(0).Name);
-                            } else if (utilityCompany.isEmpty()){ // if utility company is not in org, create one
-                                System.debug('No matching Utitlity Company was found!');
-                                Account newAccount = new Account();
-                                newAccount.Name = temp;
-                                Id RecordTypeIdUtilityCompany = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Utility Company').getRecordTypeId();
-								System.debug('Utility Company record type = ' + RecordTypeIdUtilityCompany);
-                                // set record type to utility company
-                                newAccount.RecordTypeId = RecordTypeIdUtilityCompany;
-                                insert newAccount;
-                                // add utility company to lead
-                                newLead.Utility_Company__c = newAccount.Id;
-                                System.debug('Utility Company created! ' + newAccount.Name);
-                            }
-                        }
-                    } */
+                    } 
                  } // end loop // end loop
-                    newLead.SDR__c    = 'Justin Creech';
+                    newLead.SDR__c    = 'John Doe';
                     newLead.LeadSource = 'solarreviews.com';
                     newLead.Energy_Consultant__c = 'NONE';
                     newLead.Solar_Review_Home_Advisor_Notes__c = emailText.substringAfter('make a request.');
                     insert newLead;
                     System.debug('New Lead inserted: ' + newLead.Firstname + ' ' + newLead.LastName);
             	} // END SOLAR REVIEWS EMAIL LOGIC
-
             // Save attachments, if any
             if (email.textAttachments != null && email.textAttachments.size() > 0) {
                 for (Messaging.Inboundemail.TextAttachment tAttachment : email.textAttachments) {
@@ -230,9 +187,8 @@ global class CreateLeadFromEmail implements Messaging.InboundEmailHandler {
                     insert attachment;
                 }
             }
-           
 		}
             result.success = true;
             return result; 
-        }
+    }
 }
